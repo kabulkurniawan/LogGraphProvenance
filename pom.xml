@@ -1,0 +1,183 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>sepses</groupId>
+  <artifactId>jsontordf</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>sepses.jsontordf.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+  <name>jsontordf</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <carml.version>0.2.3</carml.version>
+    <jena.version>3.2.0</jena.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml</artifactId>
+            <version>${carml.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-rdf-mapper</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        
+           <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+            <version>${jena.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-model</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-logical-source-resolver-xpath</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-commons</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-logical-source-resolver-csv</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-engine</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena</artifactId>
+            <version>${jena.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-logical-source-resolver-jsonpath</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taxonic.carml</groupId>
+            <artifactId>carml-logical-source-resolver</artifactId>
+            <version>${carml.version}</version>
+        </dependency>
+		  <dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1</version>
+		</dependency>
+		<dependency>
+   			 <groupId>com.jayway.jsonpath</groupId>
+    		 <artifactId>json-path</artifactId>
+    		 <version>2.4.0</version>
+		</dependency>
+			<!-- https://mvnrepository.com/artifact/eu.wdaqua/hdt-java-core -->
+	<!-- https://mvnrepository.com/artifact/eu.wdaqua/hdt-jena -->
+	<dependency>
+	    <groupId>eu.wdaqua</groupId>
+	    <artifactId>hdt-jena</artifactId>
+	    <version>2.1</version>
+	</dependency>
+	<dependency>
+	    <groupId>eu.wdaqua</groupId>
+	    <artifactId>hdt-java-core</artifactId>
+	    <version>2.1</version>
+	</dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!--  configuration -->
+		<dependency>
+		    <groupId>org.yaml</groupId>
+		    <artifactId>snakeyaml</artifactId>
+		    <version>1.26</version>
+		</dependency>
+
+		        
+  </dependencies>
+</project>

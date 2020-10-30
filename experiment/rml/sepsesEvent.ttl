@@ -1,0 +1,76 @@
+<http://w3id.org/sepses/resource/event/core/event-7b6eb2a8-4c53-40d8-a7d5-9f00378bbcc7>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-91acc57a-2ba2-4f61-a4c8-3cf8868638d6> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:18:59.236Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:18:59.236Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-02> .
+
+<http://w3id.org/sepses/resource/event/core/event-e6a503a2-3f38-450c-8830-7c6222b80b05>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-7b5d9280-a396-4347-86d5-ef0335541a7e> , <http://w3id.org/sepses/resource/win-event/audit/LogEntry-72060ec7-ced6-4f95-9275-dfa4fe98fb3c> , <http://w3id.org/sepses/resource/win-event/audit/LogEntry-c69be42d-f52f-4987-8b4a-2229d09093da> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:18:49.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:14:39.239Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-02> .
+
+<http://w3id.org/sepses/resource/event/core/event-9a946761-9010-4d55-9478-d18b95f1fedd>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-7b5d9280-a396-4347-86d5-ef0335541a7e> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:18:49.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:18:49.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-04> .
+
+<http://w3id.org/sepses/resource/event/core/event-9aa2e6f7-f2f8-4023-94e5-e36b835bc8b7>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-11883550-2be9-428f-a298-089a5c7cd75c> , <http://w3id.org/sepses/resource/win-event/audit/LogEntry-ee0edc91-9a9b-4e8d-a7ff-d34cbcc422e4> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:13:49.240Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:13:29.231Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-04> .
+
+<http://w3id.org/sepses/resource/event/core/event-b00bba9a-8d97-4c93-89bb-fe3ad7b16d83>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-e6e733ac-5e86-44fc-93a9-f09a58d5be09> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:12:49.235Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:12:49.235Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-01> .
+
+<http://w3id.org/sepses/resource/event/core/event-552beb27-a49c-4c1e-a0fc-9e773c9ecab4>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-91acc57a-2ba2-4f61-a4c8-3cf8868638d6> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:18:59.236Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:18:59.236Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-04> .
+
+<http://w3id.org/sepses/resource/event/core/event-defbdae7-f154-4a53-8e88-1bec45da4291>
+        a       <http://w3id.org/sepses/vocab/event/core#SepsesEvent> ;
+        <http://w3id.org/sepses/vocab/event/core#detectedLog>
+                <http://w3id.org/sepses/resource/win-event/audit/LogEntry-e6e733ac-5e86-44fc-93a9-f09a58d5be09> ;
+        <http://w3id.org/sepses/vocab/event/core#eventEnd>
+                "2020-09-14T23:12:49.235Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#eventStart>
+                "2020-09-14T23:12:49.235Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        <http://w3id.org/sepses/vocab/event/core#hasRule>
+                <http://w3id.org/sepses/resource/sigma/sigma-00> .

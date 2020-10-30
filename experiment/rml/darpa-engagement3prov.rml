@@ -1,0 +1,207 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix carml: <http://carml.taxonic.com/carml/> .
+@prefix win: <http://sepses.log/win-event#> .
+@prefix darpa: <http://sepses.log/darpa#>.
+@prefix cl: <http://sepses.log/coreLog#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix : <http://epfl.ch/mapping/>.
+
+
+
+<#EventMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/event#{datum.Event.subject.UUID}{datum.Event.predicateObject.UUID}{datum.Event.properties.map.exec}{datum.Event.type}{datum.Event.timestampNanos}"];
+ rr:predicateObjectMap [ rr:predicate darpa:eventAction;  rr:objectMap [ carml:multiReference "datum.Event.type"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#Event"]];
+ rr:predicateObjectMap [ rr:predicate cl:timestamp;  rr:objectMap [ rml:reference "datum.Event.timestampNanos"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:sequence;  rr:objectMap  [ rml:reference "datum.Event.sequence.long"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.Event.hostId}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:subject;  rr:objectMap [ rr:template "http://sepses.res/darpa/entity#{datum.Event.subject.UUID}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObject;  rr:objectMap [ rr:template "http://sepses.res/darpa/entity#{datum.Event.predicateObject.UUID}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObjectPath;  rr:objectMap [ rml:reference "datum.Event.predicateObjectPath.string"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObject2;  rr:objectMap [ rr:template "http://sepses.res/darpa/entity#{datum.Event.predicateObject2.UUID}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObject2Path;  rr:objectMap [ rml:reference "datum.Event.predicateObject2Path.string"; rr:datatype xsd:string;]]; 
+ rr:predicateObjectMap [ rr:predicate darpa:commandLine;  rr:objectMap  [ rml:reference "datum.Event.properties.map.cmdLine"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:ppid;  rr:objectMap  [ rml:reference "datum.Event.properties.map.ppid"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate darpa:threadId;  rr:objectMap  [ rml:reference "datum.Event.threadId.int"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate darpa:exec;  rr:objectMap  [ rml:reference "datum.Event.properties.map.exec"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:argMemFlags;  rr:objectMap  [ rml:reference "datum.Event.properties.map.arg_mem_flags"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:partialPath;  rr:objectMap  [ rml:reference "datum.Event.properties.map.partial_path"; rr:datatype xsd:string;]];
+
+
+
+
+.
+
+<#HostMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/host#{datum.Host.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/coreLog#Host"]];
+ rr:predicateObjectMap [ rr:predicate cl:hostName;  rr:objectMap [ rml:reference "datum.Host.hostname"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:hostType;  rr:objectMap  [ rr:template "http://sepses.res/host/type#{datum.Host.hostType}"]];
+ rr:predicateObjectMap [ rr:predicate cl:hostOS;  rr:objectMap [ rml:reference "datum.Host.osDetails"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:IPAddress;  rr:objectMap [ carml:multiTemplate "http://sepses.res/host/ip#{datum.Host.interfaces.ipAddress}";]];
+
+
+.
+<#PrincipalMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.Principal.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#Principal"]];
+ rr:predicateObjectMap [ rr:predicate cl:userName;  rr:objectMap [ rml:reference "datum.Principal.username.string"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:userType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/principal/type#{datum.Principal.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:userId;  rr:objectMap [ rml:reference "datum.Principal.userId"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.Principal.hostId}";]];
+
+.
+
+<#SubjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.Subject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template  "http://sepses.log/darpa#Subject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:subjectType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/subject/type#{datum.Subject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:parentSubject;  rr:objectMap  [ rr:template "http://sepses.res/darpa/entity#{datum.Subject.parentSubject.UUID}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:localPrincipal;  rr:objectMap  [ rr:template "http://sepses.res/darpa/entity#{datum.Subject.localPrincipal.UUID}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:commandLine;  rr:objectMap  [ rml:reference "datum.Subject.cmdLine.string"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:path;  rr:objectMap  [ rml:reference "datum.Subject.properties.map.path"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:cid;  rr:objectMap  [ rml:reference "datum.Subject.cid"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.Subject.hostId}";]];
+
+.
+
+ 	  	 	
+<#MemoryObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.MemoryObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#MemoryObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:memoryObjectType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/memoryObject/type#{datum.MemoryObject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:memoryAddress;  rr:objectMap  [ rr:template "http://sepses.res/darpa/memoryObject/memoryAddress#{datum.MemoryObject.memoryAddress}"]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.MemoryObject.baseObject.hostId}";]];
+
+.
+
+<#FileObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.FileObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#FileObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:fileObjectType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/fileObject/type#{datum.FileObject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:fileName;  rr:objectMap   [ rml:reference "datum.FileObject.baseObject.properties.map.filename"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:localPrincipal;  rr:objectMap  [ rr:template "http://sepses.res/darpa/entity#{datum.FileObject.localPrincipal.UUID}"]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.FileObject.baseObject.hostId}";]];
+
+.
+
+<#RegistryKeyObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.RegistryKeyObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#RegistryKeyObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:registryKey;  rr:objectMap [ rml:reference "datum.RegistryKeyObject.key"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.RegistryKeyObject.baseObject.hostId}";]];
+.
+
+<#NetFlowObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.NetFlowObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#NetFlowObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:localAddress;  rr:objectMap [ rml:reference "datum.NetFlowObject.localAddress"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:localPort;  rr:objectMap [ rml:reference "datum.NetFlowObject.localPort"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate darpa:remoteAddress;  rr:objectMap [ rml:reference "datum.NetFlowObject.remoteAddress"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:remotePort;  rr:objectMap [ rml:reference "datum.NetFlowObject.remotePort"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate darpa:ipProtocol;  rr:objectMap [ rml:reference "datum.NetFlowObject.ipProtocol.int"; rr:datatype xsd:integer;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.NetFlowObject.baseObject.hostId}";]];
+
+.
+
+<#UnnamedPipeObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.UnnamedPipeObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#UnnamedPipeObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:sourceId;  rr:objectMap   [ rr:template "http://sepses.res/darpa/fileObject/type#{datum.UnnamedPipeObject.sourceUUID.UUID}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:sinkId;  rr:objectMap   [ rr:template "http://sepses.res/darpa/fileObject/type#{datum.UnnamedPipeObject.sinkUUID.UUID}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:sourceFileDescriptor;  rr:objectMap  [ rml:reference "datum.UnnamedPipeObject.sourceFileDescriptor"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:sinkFileDescriptor;  rr:objectMap  [ rml:reference "datum.UnnamedPipeObject.sinkFileDescriptor"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.UnnamedPipeObject.baseObject.hostId}";]];
+
+.
+
+<#SrcSinkObjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.logEntry" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.SrcSinkObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#SrcSinkObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:srcSinkObjectType;  rr:objectMap   [ rr:template "http://sepses.res/darpa/fileObject/type#{datum.SrcSinkObject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:fileDescriptor;  rr:objectMap  [ rml:reference "datum.SrcSinkObject.fileDescriptor"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.SrcSinkObject.baseObject.hostId}";]];
+
+.

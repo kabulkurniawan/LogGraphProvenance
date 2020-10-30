@@ -1,0 +1,74 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix carml: <http://carml.taxonic.com/carml/> .
+@prefix win: <https://w3id.org/sepses/vocab/log/win-event#>.
+@prefix cl: <https://w3id.org/sepses/vocab/log/coreLog#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix : <http://epfl.ch/mapping/>.
+
+<#SubjectMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://w3id.org/sepses/resource/win-event/winlog/LogEntry-{uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "https://w3id.org/sepses/vocab/log/win-event#Winlog"]];
+ rr:predicateObjectMap [ rr:predicate win:eventAction;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/event/action#{event.action}";]];
+ rr:predicateObjectMap [ rr:predicate win:eventCategory;  rr:objectMap [ carml:multiTemplate "http://w3id.org/sepses/resource/event/category#{event.category}";]];
+ rr:predicateObjectMap [ rr:predicate cl:logLevel;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/loglevel#{log.level}";]];
+ rr:predicateObjectMap [ rr:predicate cl:timestamp;  rr:objectMap [ rml:reference "timestamp"; rr:datatype xsd:dateTime;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/host#{host.hostname}";]];
+ rr:predicateObjectMap [ rr:predicate cl:message;  rr:objectMap [ rml:reference "message";  rr:datatype xsd:string;]];
+
+ rr:predicateObjectMap [ rr:predicate win:eventProvider;  rr:objectMap [ carml:multiTemplate "http://w3id.org/sepses/resource/event/provider#{event.provider}";]];
+ rr:predicateObjectMap [ rr:predicate win:pid;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/process/id#{process.pid}";]];
+ rr:predicateObjectMap [ rr:predicate win:hasUser;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/user#{user.name}";]];
+ rr:predicateObjectMap [ rr:predicate win:eventId;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/event/id#{winlog.event_id}";]];
+ rr:predicateObjectMap [ rr:predicate win:processName;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/process#{process.name}";]]; 
+ rr:predicateObjectMap [ rr:predicate win:processHash;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/event/hash#{process.hash.sha256}";]]; 
+ rr:predicateObjectMap [ rr:predicate win:processExecutable;  rr:objectMap [rml:reference "process.executable";  rr:datatype xsd:string;]]; 
+ rr:predicateObjectMap [ rr:predicate win:ppid;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/process/id#{process.parent.pid}";]]; 
+ rr:predicateObjectMap [ rr:predicate win:processDir;  rr:objectMap [ rml:reference "process.working_directory"; rr:datatype xsd:string;]]; 
+ rr:predicateObjectMap [ rr:predicate win:processCommand;  rr:objectMap [ rml:reference "process.command_line";  rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate win:processArgs;  rr:objectMap [ carml:multiReference "process.args";  rr:datatype xsd:string;]];
+
+ rr:predicateObjectMap [ rr:predicate win:sourceIP;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/host#{source.ip}";]];
+ rr:predicateObjectMap [ rr:predicate win:sourcePort;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/port#{source.port}";]];
+ rr:predicateObjectMap [ rr:predicate win:destinationIP;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/host#{destination.ip}";]];
+ rr:predicateObjectMap [ rr:predicate win:destinationPort;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/port#{destination.port}";]];
+ rr:predicateObjectMap [ rr:predicate win:networkType;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/network/type#{network.type}";]];
+rr:predicateObjectMap  [rr:predicate win:networkDirection;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/network/type#{network.direction}";]];
+ rr:predicateObjectMap [ rr:predicate win:networkTransport;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/network/transport#{network.transport}";]];
+ rr:predicateObjectMap [ rr:predicate win:networkProtocol;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/network/protocol#{network.protocol}";]];
+
+ rr:predicateObjectMap [ rr:predicate win:fileName;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/event/file#{file.name}";]]; 
+ rr:predicateObjectMap [ rr:predicate win:filePath;  rr:objectMap  [ rml:reference "file.path";  rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate win:fileExtension;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/file/extension#{file.extension}"; ]];
+
+ rr:predicateObjectMap [ rr:predicate win:registryTargetObject;  rr:objectMap  [ rml:reference "winlog.event_data.TargetObject";  rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate win:registryEventType;  rr:objectMap [ rr:template "http://w3id.org/sepses/resource/registry/eventType#{winlog.event_data.EventType}"; ]];
+
+
+.
+
+<#HostMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source [
+      a carml:Stream ;
+    ] ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$" ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://w3id.org/sepses/resource/host#{host.hostname}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "https://w3id.org/sepses/resource/#Host"]];
+rr:predicateObjectMap [ rr:predicate cl:hostName;  rr:objectMap [ rml:reference "host.hostname"; rr:datatype xsd:string;]];
+rr:predicateObjectMap [ rr:predicate cl:hostOS;  rr:objectMap [ rml:reference "host.os"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:IPAddress;  rr:objectMap [ carml:multiTemplate "http://w3id.org/sepses/resource/host#{host.ip}";]];
+
+.

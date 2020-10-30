@@ -40,7 +40,6 @@ public class Main {
 	      options.addOption("e", true, "sparql endpoint");
 	      options.addOption("n", true, "namegraph");
 	      options.addOption("sl", true, "starting line, default 0");
-	      options.addOption("rt", true, "remove tail?");
 	      
 	      CommandLineParser parser = new DefaultParser();
 	      CommandLine cmd = parser.parse(options, args);
@@ -51,7 +50,6 @@ public class Main {
 	      String sparqlEp = cmd.getOptionValue("e");
 	      String namegraph = cmd.getOptionValue("n");
 	      String startingLine = cmd.getOptionValue("sl");
-	      String removeTail = cmd.getOptionValue("rt");
 	      
 	     // String rmlFile = cmd.getOptionValue("m");
 	      
@@ -69,16 +67,11 @@ public class Main {
 //	  	   }
 //	      namegraph = "http://w3id.org/sepses/graph/cadets100000";
 //	  	  startingLine = "0";
-//	  	  removeTail ="yes";
 //	      //=======end of experiment in IDE   =============
 	    
 	     // System.exit(0);
 	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter);
 	      
-	      if(removeTail.equals("no")) {
-	    	  System.out.println("remove provenance tail...");
-	    	  Provenance.removeProvTail(sparqlEp);
-	      }
 	      
 	      FileUtils.cleanDirectory(new File(outputdir));
 	      

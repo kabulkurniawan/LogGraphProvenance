@@ -103,6 +103,12 @@ public class Provenance {
 		   // store prov model
 			Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
 			
+			//clear prov tail
+			System.out.println("remove provenance tail..."+outputFileHDT);
+			Provenance.removeProvTail(sparqlEp);
+			
+			
+			
 		if(backupfile=="false"){
 				System.out.print("delete prov file..");
 				Utility.deleteFile(provModelFile);
@@ -186,9 +192,10 @@ public class Provenance {
 	        //1. create a simple execution structure
 	        System.out.println("fixing file execution relation..");
 	        String execQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
-	        		"CONSTRUCT {?objy darpa:executedBy ?objx }\r\n" + 
+	        		" DELETE {?bashA darpa:fork ?bashB. ?bashB darpa:execute ?objy }\r\n" +
+	        		"INSERT {?bashA darpa:fork ?objx. ?objy darpa:executedBy ?objx }\r\n" +
 	        		"\r\n" + 
-	        		"where { \r\n" + 
+	        		"WHERE { \r\n" + 
 	        		"   ?bashA darpa:fork ?bashB.\r\n" + 
 	        		"   ?bashB darpa:execute ?objy.\r\n" + 
 	        		"   ?bashA darpa:fork ?objx.\r\n" + 
@@ -199,16 +206,16 @@ public class Provenance {
 	        		"   \r\n" + 
 	        		"}";
 	        
+	        //System.out.print(execQuery);
+	        UpdateRequest execRequest = UpdateFactory.create(execQuery);
+	        UpdateAction.execute(execRequest,provModel) ;
+	      
+	        //1b. removed the old execution structure
 
-	        QueryExecution execQexec = QueryExecutionFactory.create(execQuery, provModel);
-	        Model exeModel = execQexec.execConstruct();
-	        provModel.add(exeModel);   
-	      //1b. removed the old execution structure
 	        String delOldExecQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
-	        		"DELETE {?bashA darpa:fork ?bashB. ?bashB darpa:execute ?objy  }\r\n" + 
+	        		"DELETE {?bashB darpa:execute ?objy  }\r\n" + 
 	        		"\r\n" + 
 	        		"where { \r\n" + 
-	        		"   ?bashA darpa:fork ?bashB.\r\n" + 
 	        		"   ?bashB darpa:execute ?objy.\r\n" + 
 	        		"   \r\n" + 
 	        		"}";
@@ -216,7 +223,7 @@ public class Provenance {
 		    UpdateRequest delOldExecUpdate = UpdateFactory.create(delOldExecQuery);
 		    UpdateAction.execute(delOldExecUpdate,provModel) ;
 		    
-		    
+	
 	        //2.a read (from ?s read ?o, to ?o readyBy ?s)
 	        System.out.println("fixing read-write and send-receive relation..");
 	        String readQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
@@ -394,6 +401,8 @@ public class Provenance {
 		        UpdateProcessor  proc6b = UpdateExecutionFactory.createRemote(qexec6b,sparqlEp);
 		        proc6b.execute();
 		        
+		        
+		        
 		        //2.a read (from ?s read ?o, to ?o readyBy ?s)
 		        System.out.println("fixing read-write and send-receive relation..");
 		        String query7 = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
@@ -548,5 +557,6 @@ public class Provenance {
 	    
 	}
 	
+
 	
 }

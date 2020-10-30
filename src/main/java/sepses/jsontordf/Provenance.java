@@ -191,7 +191,7 @@ public class Provenance {
 	        //remodeled the graph as used to be
 	        //1. create a simple execution structure
 	        System.out.println("fixing file execution relation..");
-	        String execQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        String execQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n " + 
 	        		" DELETE {?bashA darpa:fork ?bashB. ?bashB darpa:execute ?objy }\r\n" +
 	        		"INSERT {?bashA darpa:fork ?objx. ?objy darpa:executedBy ?objx }\r\n" +
 	        		"\r\n" + 
@@ -200,9 +200,10 @@ public class Provenance {
 	        		"   ?bashB darpa:execute ?objy.\r\n" + 
 	        		"   ?bashA darpa:fork ?objx.\r\n" + 
 	        		"   BIND (strafter(str(?objx),\"#\") as ?obja)\r\n" + 
-	        		"   BIND (substr(str(?objy),strlen(str(?objy))-strlen(str(?obja))+1) as ?objb)\r\n" + 
+	        		"   BIND (substr(str(?objy),strlen(str(?objy))-strlen(str(?obja))) as ?objb)\r\n"
+	        		+ "BIND (concat(\"/\",str(?obja)) as ?objaa)" + 
 	        		"   \r\n" + 
-	        		"   FILTER (?objb = ?obja )\r\n" + 
+	        		"   FILTER (?objb = ?objaa )\r\n" + 
 	        		"   \r\n" + 
 	        		"}";
 	        

@@ -8,6 +8,8 @@ rml-file: darpa-engagement3lite.rml
 
 triple-store: graphdb
 
+live-store: no
+
 backup-file: no
 
 field-filter:

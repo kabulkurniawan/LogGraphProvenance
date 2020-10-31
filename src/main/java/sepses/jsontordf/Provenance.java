@@ -31,93 +31,36 @@ public class Provenance {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static HashMap<String, String> generateEventProvenance(Model masterModel, Model provModel, String outputdir, String inputdir, String outputFileName, HashMap<String, String> hdtOutput, String namegraph, String sparqlEp, String outputFile, String backupfile, String triplestore, String initRdfFile ) throws Exception{
-		//first load the previous.hdt file and combine them with the new generated model
-		
-		
-		String outputFileHDTTemp = hdtOutput.get("master");
-		String outputFileProvHDTTemp = hdtOutput.get("prov");
-		
-		masterModel = RDFDataMgr.loadModel(outputFileName) ;
-		
-		String outputFileHDT = outputdir+Utility.getOriginalFileName(outputFileName)+".hdt";
-		String outputFileProvHDT = outputdir+Utility.getOriginalFileName(outputFileName)+"_prov.hdt";
-		
-		
-		//check if previous created hdt model exists, if yes then combine!
-		//System.out.println("outputfileHDTTemp =>"+outputFileHDTTemp);
-		
-		File hdtFilePath = new File(outputFileHDTTemp);
-		if(hdtFilePath.exists()) {
-			System.out.println("master hdtFile exists!");
-			Model prevMasterModel = Utility.loadHDTToJenaModel(outputFileHDTTemp);
-			masterModel.add(prevMasterModel);
-			prevMasterModel.close();
-			//when loading hdt file, this file is created then it's better to remove it
-			//Utility.deleteFile(outputFileHDTTemp);
-			Utility.deleteFile(outputFileHDTTemp+".index.v1-1");		
-		}
-		
-		//not sure how to say, but hdt file need an initial empty file to load and combine the model
-		//test.ttl must be available in the input dir!
-		provModel = RDFDataMgr.loadModel(initRdfFile) ;
-		
-		//System.out.println("outputFileProvHDTTemp =>"+outputFileProvHDTTemp);
-		
-		File hdtProvFilePath = new File(outputFileProvHDTTemp);
-		if(hdtProvFilePath.exists()) {
-			System.out.println("prov hdtFile exists!");
-			Model prevProvModel = Utility.loadHDTToJenaModel(outputFileProvHDTTemp);
-			provModel.add(prevProvModel);
-			prevProvModel.close();
-			//Utility.deleteFile(outputFileProvHDTTemp);
-			Utility.deleteFile(outputFileProvHDTTemp+".index.v1-1");
-		}
-	
+	public static void generateEventProvenance(Model masterModel, Model provModel, String outputdir, String namegraph, String sparqlEp, String outputFile, String triplestore, String livestore) throws Exception{
 			
-			//saving prov model
+		//saving prov model
 			System.out.println("adding provenance model...");
 	
 			Model currentProvModel = generateProvenanceFromHDT(masterModel, provModel);
-			
+
+			if(livestore == "true") {
+			//save prov model to rdf.. 	then store prov model to triplestore (uncomment this if you want live storing)
 			System.out.println("save provmodel to rdf file...");
 			String outputProvFile = outputFile+"_prov"+".ttl";
 			String provModelFile = Utility.saveToFile(currentProvModel,outputdir,outputProvFile);
-			
-			//generate hdt file for provenance
-			System.out.println("save provmodel to hdt...."+outputFileProvHDT);
-			Utility.generateHDTFile(namegraph, provModelFile, "TURTLE", outputFileProvHDT);
-			hdtOutput.put("prov", outputFileProvHDT);
-			
+			Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
+			Utility.deleteFile(provModelFile);
+			}
+						
+			//clear prov tail
+			System.out.println("remove provenance tail...");
+			Provenance.removeProvTail(sparqlEp);
 			
 			//clear current event graph (remove event graphs that have already been generated as provenance ) 
 			clearCurrentEventGraph(masterModel);
 			
-			//generate hdt file for masterModel
-			System.out.println("save mastermodel to rdf file...");
-			String masterModelFile = Utility.saveToFile(masterModel,outputdir,outputFile);
-			System.out.println("save mastermodel to hdt..."+outputFileHDT);
-			Utility.generateHDTFile(namegraph, masterModelFile, "TURTLE", outputFileHDT);
-			hdtOutput.put("master", outputFileHDT);
+			//save mastermodel to rdf..
+			//System.out.println("save mastermodel to rdf file...");
+			//Utility.saveToFile(masterModel,outputdir,outputFile);
 			
-		   // store prov model
-			Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
-			
-			//clear prov tail
-			System.out.println("remove provenance tail..."+outputFileHDT);
-			Provenance.removeProvTail(sparqlEp);
-			
-			
-			
-		if(backupfile=="false"){
-				System.out.print("delete prov file..");
-				Utility.deleteFile(provModelFile);
-				System.out.println("done!");
-			}
-		System.out.println("done!");
+			System.out.println("done!");
 
 		
-		return hdtOutput;
 	}
 	
 	private static Model generateProvenanceFromHDT(Model masterModel, Model provModel) throws IOException {

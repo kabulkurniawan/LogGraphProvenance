@@ -25,6 +25,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.ModelFactoryBase;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -48,7 +49,7 @@ import sepses.jsontordf.JSONRDFParser;
 
 public class JsonReader {
 	
-	public static void readJson(String t, String file, String l, String se, String ng, String sl, String outputdir, String inputdir, String rmldir, String rmlfile, String triplestore, String backupfile,  ArrayList<String> fieldfilter) throws Exception {
+	public static void readJson(String t, String file, String l, String se, String ng, String sl, String outputdir, String inputdir, String rmldir, String rmlfile, String triplestore, String backupfile,  ArrayList<String> fieldfilter, String livestore) throws Exception {
 		
 		String initFile = Utility.getOriginalFileName(ng);
 		String initRdfFile = inputdir+initFile+"-init.ttl";
@@ -86,11 +87,42 @@ public class JsonReader {
 		Integer countLine=0;
 		Integer templ = 0;
 		Integer group=0;
-		HashMap<String, String> hdtOutput = new HashMap<String, String>();
-		hdtOutput.put("master", initHDTFile);
-		hdtOutput.put("prov", initHDTProvFile);
+		HashMap<String, Model> outputModels = new HashMap<String, Model>();
+		
+		outputModels.put("masterModel", masterModel);
+		outputModels.put("provModel", provModel);
+
+		masterModel = RDFDataMgr.loadModel(initRdfFile) ;
+		//check if existing .hdt model exists
+		
+		File hdtFilePath = new File(initHDTFile);
+		if(hdtFilePath.exists()) {
+			System.out.println("master hdtFile exists!");
+			Model prevMasterModel = Utility.loadHDTToJenaModel(initHDTFile);
+			masterModel.add(prevMasterModel);
+			prevMasterModel.close();
+			//when loading hdt file, this file is created then it's better to remove it
+			//Utility.deleteFile(outputFileHDTTemp);
+			Utility.deleteFile(initHDTFile+".index.v1-1");		
+		}
+		
+			//System.out.println("outputFileProvHDTTemp =>"+outputFileProvHDTTemp);
+		provModel = RDFDataMgr.loadModel(initRdfFile) ;
 		
 		
+		File hdtProvFilePath = new File(initHDTProvFile);
+		if(hdtProvFilePath.exists()) {
+			System.out.println("prov hdtFile exists!");
+			Model prevProvModel = Utility.loadHDTToJenaModel(initHDTProvFile);
+			provModel.add(prevProvModel);
+			prevProvModel.close();
+			//Utility.deleteFile(outputFileProvHDTTemp);
+			Utility.deleteFile(initHDTProvFile+".index.v1-1");
+		}
+		
+		
+		
+				
 		while (in.ready()) {
 		
 			String line = in.readLine();
@@ -131,27 +163,24 @@ public class JsonReader {
 					jmodels = jps.Parse(alljsObj.toJSONString());
 			
 					//saving main model
-					System.out.print("saving main model...");
+					System.out.println("saving main model...");
 					String outputFile = Utility.getOriginalFileName(filename)+"_"+lineNumber+"_"+group+".ttl";
 					String outputFileName = Utility.saveRDF4JModel(jmodels,outputdir,outputFile);
 					
+					//join to prev hdt model
+					System.out.print("combine to prev hdt model if (exists)...");	
+					Model masterModelTemp = RDFDataMgr.loadModel(outputFileName) ;
+					masterModel.add(masterModelTemp);
+					Utility.deleteFile(outputFileName);
+
 					//store main model (if we need to store the parsed rdf log lines, uncomment the line bellow!)
 					//Utility.storeFileInRepo(triplestore,outputFileName, sparqlEp, namegraph, "dba", "dba");
 					
-					
-					hdtOutput = Provenance.generateEventProvenance(masterModel, provModel, outputdir, inputdir, outputFileName, hdtOutput, namegraph, sparqlEp, outputFile, backupfile, triplestore, initRdfFile);
-					
-					if(backupfile=="false"){
-						System.out.print("delete model file..");
-						Utility.deleteFile(outputFileName);
-						System.out.println("done!");
-					}
+					Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore);
 					
 					alljson.clear();
 					alljsObj.clear();
 					jmodels.clear();
-					masterModel.close();
-					provModel.close();
 					templ=0;
 				}
 			   }
@@ -174,24 +203,49 @@ public class JsonReader {
 		String outputFileName = Utility.saveRDF4JModel(jmodels,outputdir,outputFile);
 		
 		
+		//join to prev hdt model
+		System.out.print("combine to prev hdt model if (exists)...");	
+		Model masterModelTemp = RDFDataMgr.loadModel(outputFileName) ;
+		masterModel.add(masterModelTemp);
+		Utility.deleteFile(outputFileName);
+		
 		//store main model
 		//Utility.storeFileInRepo(triplestore,outputFileName, sparqlEp, namegraph, "dba", "dba");
 		
-		hdtOutput = Provenance.generateEventProvenance(masterModel, provModel, outputdir, inputdir, outputFileName, hdtOutput, namegraph, sparqlEp, outputFile, backupfile, triplestore, initRdfFile);
-		
+		Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore);
 
-		if(backupfile=="false"){
-			System.out.print("delete model file..");
-			Utility.deleteFile(outputFileName);
-			System.out.println("done!");
-		}
-		
 		alljson.clear();
 		alljsObj.clear();
 		jmodels.clear();
-		provModel.close();
 		templ=0;
 	}
+	
+	//save mastermodel to rdf..
+	System.out.println("save master model to rdf file...");
+	String outputFileName = Utility.getOriginalFileName(namegraph)+".ttl";
+	String outputMasterFile = Utility.saveToFile(masterModel,outputdir,outputFileName);
+	
+	//save provModel to rdf..
+	System.out.println("save prov model to rdf file...");
+	String outputProvFileName = Utility.getOriginalFileName(namegraph)+"_prov.ttl";
+	String outputProvFile = Utility.saveToFile(provModel,outputdir,outputProvFileName);
+	
+	//store prov to triplestore
+	if(livestore=="false") {
+		Utility.storeFileInRepo(triplestore,outputProvFile, sparqlEp, namegraph+"_prov", "dba", "dba");
+	}
+	
+	//save rdf to .hdt
+	System.out.println("save master and prov model rdf to hdt....");
+	String outputMasterHDT = inputdir+Utility.getOriginalFileName(namegraph)+".hdt";
+	Utility.generateHDTFile(namegraph, outputMasterFile, "TURTLE", outputMasterHDT);
+	String outputProvHDT = inputdir+Utility.getOriginalFileName(namegraph)+"_prov.hdt";
+	Utility.generateHDTFile(namegraph, outputProvFile, "TURTLE", outputProvHDT);
+	
+	
+	provModel.close();
+	masterModel.close();
+	
 //	alljsObj.put("logEntry", alljson);
 //	System.out.println("parsing json to rdf...");
 //	//System.out.print(alljsObj);
@@ -260,9 +314,9 @@ public class JsonReader {
 	*/
 //	Utility.saveRDF4JModel(jmodels, "output",filename);
 //	//Utility.saveToFile(models, "output",filename);
-	Utility.copyFileUsingStream(hdtOutput.get("master"), initHDTFile);
-	Utility.copyFileUsingStream(hdtOutput.get("prov"), initHDTProvFile);
-	
+//	Utility.copyFileUsingStream(hdtOutput.get("master"), initHDTFile);
+//	Utility.copyFileUsingStream(hdtOutput.get("prov"), initHDTProvFile);
+//	
 	System.out.println("Finished!");	
 	//models.write(System.out,"TURTLE");
 	//provModel.close();

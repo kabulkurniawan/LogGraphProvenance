@@ -28,6 +28,7 @@ public class Main {
 	       String rmlfile= s.get("rml-file").toString();
 	       String triplestore= s.get("triple-store").toString();
 	       String backupfile= s.get("backup-file").toString();
+	       String livestore= s.get("live-store").toString();
 	       ArrayList<String> fieldfilter= (ArrayList<String>) s.get("field-filter");
 	       
 	       
@@ -70,7 +71,7 @@ public class Main {
 //	      //=======end of experiment in IDE   =============
 	    
 	     // System.exit(0);
-	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter);
+	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter, livestore);
 	      
 	      
 	      FileUtils.cleanDirectory(new File(outputdir));

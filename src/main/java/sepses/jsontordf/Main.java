@@ -54,10 +54,10 @@ public class Main {
 	      
 	     // String rmlFile = cmd.getOptionValue("m");
 	      
-	  	//====== only for experiment in IDE ========= 
+	  	//====== only for experiment in IDE, please uncomment this lines when you compile ========= 
 //	      type = "darpa";
 //	      file = inputdir+"darpa/cadets100000.json";
-//	  	  line = "10000";
+//	  	  line = "100000";
 //	      if(triplestore.equals("virtuoso")) {  	  
 //	  	     sparqlEp ="http://localhost:8890/sparql";
 //	      }else if(triplestore.equals("graphdb")){

@@ -176,6 +176,7 @@ public class JsonReader {
 					//store main model (if we need to store the parsed rdf log lines, uncomment the line bellow!)
 					//Utility.storeFileInRepo(triplestore,outputFileName, sparqlEp, namegraph, "dba", "dba");
 					
+					
 					Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore);
 					
 					alljson.clear();
@@ -233,6 +234,8 @@ public class JsonReader {
 	//store prov to triplestore
 	if(livestore=="false") {
 		Utility.storeFileInRepo(triplestore,outputProvFile, sparqlEp, namegraph+"_prov", "dba", "dba");
+		System.out.println("remove provenance tail...");
+		Provenance.removeProvTail(sparqlEp);
 	}
 	
 	//save rdf to .hdt
@@ -246,81 +249,8 @@ public class JsonReader {
 	provModel.close();
 	masterModel.close();
 	
-//	alljsObj.put("logEntry", alljson);
-//	System.out.println("parsing json to rdf...");
-//	//System.out.print(alljsObj);
-//	//System.exit(0);
-//	JSONRDFParser jps = new JSONRDFParser("rml/darpa-engagement3.rml");
-//	jmodels = jps.Parse(alljsObj.toJSONString());
-//	System.out.println("saving rdf...");	
-/*	while (in.ready()) {
-			String line = in.readLine();
-			//UUID uuid = UUID.randomUUID();
-			JSONParser parser = new JSONParser(); 
-			//System.out.println(line);
-			line = line.replaceAll("com.bbn.tc.schema.avro.cdm18.","");
-			//System.out.println(line);
-//			System.exit(0);
-			String lineLastChar =  line.substring(line.length()-1);
-			if(lineLastChar.equals(",")) {
-				line = line.substring(0,line.length()-1);
-			}
-			
-			JSONObject json = (JSONObject) parser.parse(line);
-			if(fileType.equals("darpa")) {
-				//System.out.println("parse darpa..");
-				// Model darpa = sepses.jsontordf.JSONParser.Parse(json.toJSONString(),"rml/darpa-engagement3.rml");
-				JSONRDFParser jp = new JSONRDFParser("rml/darpa-engagement3.rml");
-				
-				org.eclipse.rdf4j.model.Model darpa = jp.Parse(json.toJSONString());
-			//	System.out.print(darpa);
-			//	System.exit(0);
-				jmodels.addAll(darpa);				
-			}else {
-		
-			String ts = JsonPath.read(json,"$.@timestamp");
-			json.put("timestamp", ts);
-			//json.put("uuid", uuid);
-		
-			
-			String type = JsonPath.read(json,"$.agent.type");
-			if(type.equals("auditbeat")) {
-				//System.out.println(type);
-				//System.out.println(json.toJSONString());
-				Model audit = sepses.jsontordf.JSONRDFParser.Parse(json.toJSONString(),"rml/auditbeat.rml");
-				models.add(audit);
-				
-			}
-			else if(type.equals("packetbeat")) {
-				//System.out.println(type);
-				//System.out.println(json.toJSONString());
-				Model packet = sepses.jsontordf.JSONRDFParser.Parse(json.toJSONString(),"rml/packetbeat.rml");
-				models.add(packet);
-				
-			}else if(type.equals("winlogbeat")) {
-				//System.out.println(type);
-				//System.out.println(json.toJSONString());
-				Model winlog = sepses.jsontordf.JSONRDFParser.Parse(json.toJSONString(),"rml/winlogbeat.rml");
-				models.add(winlog);
-				
-			}
-//			JSONRDFParser jp = new JSONRDFParser(RMLFile);
-//			jp.Parse(alljsObj.toString());
-			//System.out.println(json);
-			//JSONArray jsonarray = new JSONArray("["+line+"]");
-			//i++;
-	}
-	}
-	*/
-//	Utility.saveRDF4JModel(jmodels, "output",filename);
-//	//Utility.saveToFile(models, "output",filename);
-//	Utility.copyFileUsingStream(hdtOutput.get("master"), initHDTFile);
-//	Utility.copyFileUsingStream(hdtOutput.get("prov"), initHDTProvFile);
-//	
 	System.out.println("Finished!");	
-	//models.write(System.out,"TURTLE");
-	//provModel.close();
-	//System.out.println(i);
+	
 	}
 
 

@@ -115,27 +115,24 @@ public class Provenance {
 	        tempModel.close();
 	        currentProvModel.add(forkModel);
 	        
-	        //delete temporary Subject Relation, we cannot delete object relation because it could
-	        //be used to connect upcoming subject relation
-	        
-	        
-	        String delSubjQuery = "prefix darpa: <http://sepses.log/darpa#>\r\n" + 
-	        		"DELETE { ?s darpa:hasSubject ?o. } \r\n" + 
-	        		"where { \r\n" + 
-	        		"    ?s darpa:hasSubject ?o.\r\n" + 
-	        		"    \r\n" + 
-	        		" }";
-	        
-	        UpdateRequest delSubjUpdate = UpdateFactory.create(delSubjQuery);
+	      //delete temporary Subject Relation, we cannot delete object relation because it could
+		    //be used to connect upcoming subject relation
+		    
+		    
+		    String delSubjQuery = "prefix darpa: <http://sepses.log/darpa#>\r\n" + 
+		    		"DELETE { ?s darpa:hasSubject ?o. } \r\n" + 
+		    		"where { \r\n" + 
+		    		"    ?s darpa:hasSubject ?o.\r\n" + 
+		    		"    \r\n" + 
+		    		" }";
+		    
+		    UpdateRequest delSubjUpdate = UpdateFactory.create(delSubjQuery);
 	        UpdateAction.execute(delSubjUpdate,currentProvModel) ;
-	        
-	        
-	        
+	    	        
 	        //remodeled the graph as used to be
 	        //1. create a simple execution structure
 	        System.out.println("fixing file execution relation..");
 	        String execQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n " + 
-	        		" DELETE {?bashA darpa:fork ?bashB. ?bashB darpa:execute ?objy }\r\n" +
 	        		"INSERT {?bashA darpa:fork ?objx. ?objy darpa:executedBy ?objx }\r\n" +
 	        		"\r\n" + 
 	        		"WHERE { \r\n" + 
@@ -153,21 +150,42 @@ public class Provenance {
 	        UpdateRequest execRequest = UpdateFactory.create(execQuery);
 	        UpdateAction.execute(execRequest,currentProvModel) ;
 	      
+	        //remove old exec
+	        String oldExecQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n " + 
+	        		"DELETE {?bashA darpa:fork ?bashB. ?bashB darpa:execute ?objy }\r\n" +
+	        		"\r\n" + 
+	        		"WHERE { \r\n" + 
+	        		"   ?bashA darpa:fork ?bashB.\r\n" + 
+	        		"   ?bashB darpa:execute ?objy.\r\n" + 
+	        		"   ?bashA darpa:fork ?objx.\r\n" + 
+	        		"   BIND (strafter(str(?objx),\"#\") as ?obja)\r\n" + 
+	        		"   BIND (substr(str(?objy),strlen(str(?objy))-strlen(str(?obja))) as ?objb)\r\n"
+	        		+ "BIND (concat(\"/\",str(?obja)) as ?objaa)" + 
+	        		"   \r\n" + 
+	        		"   FILTER (?objb = ?objaa )\r\n"
+	        		+ "FILTER NOT EXISTS {?bashB darpa:fork ?proc}" + 
+	        		"   \r\n" + 
+	        		"}";
+	        
+	        UpdateRequest oldExecRequest = UpdateFactory.create(oldExecQuery);
+	        UpdateAction.execute(oldExecRequest,currentProvModel) ;
+	      
 	        //1b. removed the old execution structure
 
 	        String delOldExecQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
 	        		"DELETE {?bashB darpa:execute ?objy  }\r\n" + 
 	        		"\r\n" + 
 	        		"where { \r\n" + 
-	        		"   ?bashB darpa:execute ?objy.\r\n" + 
+	        		"    ?bashB darpa:execute ?objy.\r\n" + 
 	        		"   \r\n" + 
 	        		"}";
 	        
 		    UpdateRequest delOldExecUpdate = UpdateFactory.create(delOldExecQuery);
 		    UpdateAction.execute(delOldExecUpdate,currentProvModel) ;
-		    
 	
-	        //2.a read (from ?s read ?o, to ?o readyBy ?s)
+		  
+
+		    //2.a read (from ?s read ?o, to ?o readyBy ?s)
 	        System.out.println("fixing read-write and send-receive relation..");
 	        String readQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
 	        		"DELETE { ?s darpa:read ?o  }\r\n" + 
@@ -202,7 +220,7 @@ public class Provenance {
 	        		"\r\n" + 
 	        		"where { \r\n" + 
 	        		"   ?s darpa:sendto ?o\r\n" + 
-	        		"}\r\n" + 
+	        		"}\r\n" +  
 	        		"";
 	        
 		    UpdateRequest sendExec = UpdateFactory.create(sendQuery);
@@ -257,8 +275,12 @@ public class Provenance {
 	    UpdateRequest removeTailReq = UpdateFactory.create(removeTailQuery);
 	    UpdateProcessor proc = UpdateExecutionFactory.createRemote(removeTailReq, sparqlEp+"/statements");
 	    proc.execute();
-	    
+	        
+		
 	}
+	
+
+    
 	
 
 	

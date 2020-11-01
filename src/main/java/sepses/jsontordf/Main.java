@@ -57,7 +57,7 @@ public class Main {
 	  	//====== only for experiment in IDE, please uncomment this lines when you compile ========= 
 //	      type = "darpa";
 //	      file = inputdir+"darpa/cadets100000.json";
-//	  	  line = "100000";
+//	  	  line = "10000";
 //	      if(triplestore.equals("virtuoso")) {  	  
 //	  	     sparqlEp ="http://localhost:8890/sparql";
 //	      }else if(triplestore.equals("graphdb")){

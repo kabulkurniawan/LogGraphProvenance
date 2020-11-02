@@ -245,6 +245,10 @@ public class JsonReader {
 	String outputProvHDT = inputdir+Utility.getOriginalFileName(namegraph)+"_prov.hdt";
 	Utility.generateHDTFile(namegraph, outputProvFile, "TURTLE", outputProvHDT);
 	
+	//clean data
+	System.out.println("clean files....");
+	Utility.deleteFile(outputMasterFile);
+	Utility.deleteFile(outputProvFile);
 	
 	provModel.close();
 	masterModel.close();

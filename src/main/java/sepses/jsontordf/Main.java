@@ -74,7 +74,7 @@ public class Main {
 	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter, livestore);
 	      
 	      
-	      FileUtils.cleanDirectory(new File(outputdir));
+	     // FileUtils.cleanDirectory(new File(outputdir));
 	      
 //		String txt = " processes = search Process:Create\r\n" + 
 //				"     reg = filter processes where (exe == \"reg.exe\" and parent_exe == \"cmd.exe\")\r\n" + 

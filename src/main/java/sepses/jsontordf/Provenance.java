@@ -141,7 +141,7 @@ public class Provenance {
 	        		"   ?bashA darpa:fork ?objx.\r\n" + 
 	        		"   BIND (strafter(str(?objx),\"#\") as ?obja)\r\n" + 
 	        		"   BIND (substr(str(?objy),strlen(str(?objy))-strlen(str(?obja))) as ?objb)\r\n"
-	        		+ "BIND (concat(\"/\",str(?obja)) as ?objaa)" + 
+	        		+  "BIND (concat(\"/\",str(?obja)) as ?objaa)" + 
 	        		"   \r\n" + 
 	        		"   FILTER (?objb = ?objaa )\r\n" + 
 	        		"   \r\n" + 

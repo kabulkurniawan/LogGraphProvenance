@@ -1,0 +1,199 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix win: <http://sepses.log/win-event#> .
+@prefix darpa: <http://sepses.log/darpa#>.
+@prefix cl: <http://sepses.log/coreLog#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix : <http://epfl.ch/mapping/>.
+
+
+
+ <#TripleMap>
+    a rr:TriplesMap;
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+        rml:referenceFormulation ql:JSONPath;
+    ];
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/event#{datum.com.bbn.tc.schema.avro.cdm18.Event.subject.com.bbn.tc.schema.avro.cdm18.UUID}{datum.com.bbn.tc.schema.avro.cdm18.Event.predicateObject.com.bbn.tc.schema.avro.cdm18.UUID}{datum.com.bbn.tc.schema.avro.cdm18.Event.properties.map.exec}{datum.com.bbn.tc.schema.avro.cdm18.Event.type}{datum.com.bbn.tc.schema.avro.cdm18.Event.timestampNanos}"];
+ rr:predicateObjectMap [ rr:predicate darpa:eventAction;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Event.type"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#Event"]];
+ rr:predicateObjectMap [ rr:predicate darpa:subject;  rr:objectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.Event.subject.com.bbn.tc.schema.avro.cdm18.UUID}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObject;  rr:objectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.Event.predicateObject.UUID}";]];
+ rr:predicateObjectMap [ rr:predicate darpa:predicateObjectPath;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Event.predicateObjectPath.string"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:exec;  rr:objectMap  [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Event.properties.map.exec"; rr:datatype xsd:string;]];
+
+
+
+
+.
+
+<#HostMapping> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+    rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/host#{datum.com.bbn.tc.schema.avro.cdm18.Host.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/coreLog#Host"]];
+ rr:predicateObjectMap [ rr:predicate cl:hostName;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Host.hostname"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:hostType;  rr:objectMap  [ rr:template "http://sepses.res/host/type#{datum.com.bbn.tc.schema.avro.cdm18.Host.hostType}"]];
+ rr:predicateObjectMap [ rr:predicate cl:hostOS;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Host.osDetails"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:IPAddress;  rr:objectMap [ rr:template "http://sepses.res/host/ip#{datum.com.bbn.tc.schema.avro.cdm18.Host.interfaces.ipAddress}";]];
+
+
+.
+<#PrincipalMapping> a rr:TriplesMap ;
+      rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+  rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.Principal.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#Principal"]];
+ rr:predicateObjectMap [ rr:predicate cl:userName;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Principal.username.string"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:userType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/principal/type#{datum.com.bbn.tc.schema.avro.cdm18.Principal.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:userId;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.Principal.userId"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.com.bbn.tc.schema.avro.cdm18.Principal.hostId}";]];
+
+.
+
+<#SubjectMapping> a rr:TriplesMap ;
+     rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+   rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.Subject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template  "http://sepses.log/darpa#Subject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:subjectType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/subject/type#{datum.com.bbn.tc.schema.avro.cdm18.Subject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:parentSubject;  rr:objectMap  [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.Subject.parentSubject.UUID}"]];
+
+.
+
+ 	  	 	
+<#MemoryObjectMapping> a rr:TriplesMap ;
+     rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+   rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.MemoryObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#MemoryObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:memoryObjectType;  rr:objectMap  [ rr:template "http://sepses.res/darpa/memoryObject/type#{datum.com.bbn.tc.schema.avro.cdm18.MemoryObject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:memoryAddress;  rr:objectMap  [ rr:template "http://sepses.res/darpa/memoryObject/memoryAddress#{datum.com.bbn.tc.schema.avro.cdm18.MemoryObject.memoryAddress}"]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.com.bbn.tc.schema.avro.cdm18.MemoryObject.baseObject.hostId}";]];
+
+.
+
+<#FileObjectMapping> a rr:TriplesMap ;
+     rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+   rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.FileObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#FileObject"]];
+
+.
+
+<#RegistryKeyObjectMapping> a rr:TriplesMap ;
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+    rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.RegistryKeyObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#RegistryKeyObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:registryKey;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.RegistryKeyObject.key"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.com.bbn.tc.schema.avro.cdm18.RegistryKeyObject.baseObject.hostId}";]];
+.
+
+<#NetFlowObjectMapping> a rr:TriplesMap ;
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+    rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.NetFlowObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#NetFlowObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:remoteAddress;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.NetFlowObject.remoteAddress"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate darpa:remotePort;  rr:objectMap [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.NetFlowObject.remotePort"; rr:datatype xsd:integer;]];
+
+.
+
+<#UnnamedPipeObjectMapping> a rr:TriplesMap ;
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+    rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.UnnamedPipeObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#UnnamedPipeObject"]];
+.
+
+<#SrcSinkObjectMapping> a rr:TriplesMap ;
+    rml:logicalSource [
+        rml:source [
+            rdf:type rmls:TCPSocketStream ;
+            rmls:hostName "localhost";
+            rmls:type "PULL" ;
+            rmls:port "5005"
+        ];
+    rml:referenceFormulation ql:JSONPath ;
+  ] ;
+
+ rr:subjectMap [ rr:template "http://sepses.res/darpa/entity#{datum.com.bbn.tc.schema.avro.cdm18.SrcSinkObject.uuid}"];
+ rr:predicateObjectMap [ rr:predicate rdf:type; rr:objectMap [ rr:template "http://sepses.log/darpa#SrcSinkObject"]];
+ rr:predicateObjectMap [ rr:predicate darpa:srcSinkObjectType;  rr:objectMap   [ rr:template "http://sepses.res/darpa/fileObject/type#{datum.com.bbn.tc.schema.avro.cdm18.SrcSinkObject.type}"]];
+ rr:predicateObjectMap [ rr:predicate darpa:fileDescriptor;  rr:objectMap  [ rml:reference "datum.com.bbn.tc.schema.avro.cdm18.SrcSinkObject.fileDescriptor"; rr:datatype xsd:string;]];
+ rr:predicateObjectMap [ rr:predicate cl:originatesFrom;  rr:objectMap [ rr:template "http://sepses.res/host#{datum.com.bbn.tc.schema.avro.cdm18.SrcSinkObject.baseObject.hostId}";]];
+
+.

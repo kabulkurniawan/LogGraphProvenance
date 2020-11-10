@@ -1,0 +1,52 @@
+# baseURI: http://sepses.log/darpa
+# imports: http://datashapes.org/dash
+# prefix: darpa
+
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix darpa: <http://sepses.log/darpa#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://sepses.log/darpa>
+  rdf:type owl:Ontology ;
+  rdfs:label "Test of Write Event" ;
+  owl:imports <http://datashapes.org/dash> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+  sh:declare [
+      rdf:type sh:PrefixDeclaration ;
+      sh:namespace "http://sepses.log/darpa#"^^xsd:anyURI ;
+      sh:prefix "darpa" ;
+    ] ;
+.
+darpa:WriteExecuteAlertShape
+  rdf:type sh:NodeShape ;
+  sh:rule [
+      rdf:type sh:SPARQLRule ;
+      sh:construct """
+		PREFIX darpa: <http://sepses.log/darpa#>
+                CONSTRUCT {
+			?a a darpa:WriteExecuteAlert .
+  			?a darpa:hasProcess ?proc .
+			?a darpa:hasProcess ?proc2 .
+                        ?a darpa:hasFile ?file .
+			?a darpa:hasHost ?host .
+			?host darpa:receivedBy ?proc .
+			?proc darpa:writeTo ?file .
+                        ?file darpa:executedBy ?proc2.
+		} WHERE {
+			?host darpa:receivedBy ?proc .
+			?proc darpa:writeTo ?file .
+                        ?file darpa:executedBy ?proc2.
+			?host darpa:hasIntegrity  "low" .
+			BIND (strafter(str(?proc),"#") AS ?subj) 
+                        BIND (strafter(str(?file),"#") AS ?obj)
+                        BIND (URI(CONCAT(CONCAT(CONCAT("http://sepses.rec/alert#",?subj),"WE"),?obj )) AS ?a)  			                                
+		}
+			""" ;
+      sh:prefixes <http://sepses.log/darpa> ;
+    ] ;
+  sh:targetClass darpa:Subject ;
+.

@@ -4,13 +4,28 @@ output-dir: experiment/output/
 
 rml-dir: experiment/rml/
 
+rule-dir: experiment/rule/
+
 rml-file: darpa-engagement3lite.rml
+
+bg-knowledge: bg-knowledge/internal.ttl
 
 triple-store: graphdb
 
-live-store: no
+live-store: yes
 
 backup-file: no
+
+confidential-dir:
+ - /tmp/passwd
+ - /var/log
+ - /etc/shadow
+
+recognized-host:
+ - localhost
+ - 127.0.0.1
+ - 128.55.12.167
+ #- 128.55.12.10
 
 field-filter:
  - EVENT_EXIT

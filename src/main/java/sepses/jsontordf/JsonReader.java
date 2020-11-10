@@ -3,56 +3,34 @@ package sepses.jsontordf;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.jena.atlas.json.JsonObject;
-import org.apache.jena.atlas.json.JsonString;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.ModelFactoryBase;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.update.UpdateAction;
-import org.apache.jena.update.UpdateExecutionFactory;
-import org.apache.jena.update.UpdateFactory;
-import org.apache.jena.update.UpdateProcessor;
-import org.apache.jena.update.UpdateRequest;
-import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.rdfhdt.hdt.hdt.HDTManager;
-
-import com.jayway.jsonpath.JsonPath;
-
-import net.sf.saxon.functions.Empty;
 import sepses.jsontordf.JSONRDFParser;
 
 public class JsonReader {
 	
-	public static void readJson(String t, String file, String l, String se, String ng, String sl, String outputdir, String inputdir, String rmldir, String rmlfile, String triplestore, String backupfile,  ArrayList<String> fieldfilter, String livestore) throws Exception {
+	public static void readJson(String t, String file, String l, String se, String ng, String sl, String outputdir, String inputdir, String rmldir, String rmlfile, String triplestore, String backupfile,  ArrayList<String> fieldfilter, String livestore, String ruledir, String bgknowledge, ArrayList<String> confidentialdir, ArrayList<String> recognizedhost) throws Exception {
 		
 		String initFile = Utility.getOriginalFileName(ng);
 		String initRdfFile = inputdir+initFile+"-init.ttl";
+		String alertFile = initFile+"_alert.ttl";
+		
+		//load backgroundmodel
+		File bgknowledgeFileObj = new File(inputdir+bgknowledge);
+		if(!bgknowledgeFileObj.exists()) {
+			bgknowledgeFileObj.createNewFile();
+		}
+		Model bgKnowledgeModel = RDFDataMgr.loadModel(inputdir+bgknowledge);
+		Model alerts = ModelFactory.createDefaultModel();	
 		
 		File initRdfFileObj = new File(initRdfFile);
 		initRdfFileObj.createNewFile();
@@ -60,8 +38,6 @@ public class JsonReader {
 		
 		String initHDTFile = inputdir+initFile+".hdt";
 		String initHDTProvFile = inputdir+initFile+"_prov.hdt";
-		
-		
 		
 		String filename =file;
 		Integer lineNumber = 1; // 1 here means the minimum line to be extracted
@@ -171,17 +147,30 @@ public class JsonReader {
 					System.out.print("combine to prev hdt model if (exists)...");	
 					Model masterModelTemp = RDFDataMgr.loadModel(outputFileName) ;
 					masterModel.add(masterModelTemp);
-					Utility.deleteFile(outputFileName);
+					//Utility.deleteFile(outputFileName);
 
 					//store main model (if we need to store the parsed rdf log lines, uncomment the line bellow!)
 					//Utility.storeFileInRepo(triplestore,outputFileName, sparqlEp, namegraph, "dba", "dba");
 					
 					
-					Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore);
+					Model currentProvModel = Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore, confidentialdir, bgKnowledgeModel, recognizedhost);
+					
+					
+					//======detect alerts, save to rdf and store to database===========
+					Model currentAlerts = AlertDetection.generateAlert(currentProvModel, bgKnowledgeModel, ruledir, alerts);
+					String outputAlertFile = Utility.saveToFile(currentAlerts,outputdir,alertFile);
+					Utility.storeFileInRepo(triplestore,outputAlertFile, sparqlEp, namegraph+"_alerts", "dba", "dba");
+					alerts.add(currentAlerts);
+					//===================================================================
+				    
+					
+					
+					
 					
 					alljson.clear();
 					alljsObj.clear();
 					jmodels.clear();
+					currentAlerts.close();
 					templ=0;
 				}
 			   }
@@ -213,11 +202,20 @@ public class JsonReader {
 		//store main model
 		//Utility.storeFileInRepo(triplestore,outputFileName, sparqlEp, namegraph, "dba", "dba");
 		
-		Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore);
+		Model currentProvModel = Provenance.generateEventProvenance(masterModel, provModel, outputdir, namegraph, sparqlEp, outputFile, triplestore, livestore, confidentialdir, bgKnowledgeModel, recognizedhost);
 
+		//======detect alerts, save to rdf and store to database===========
+		Model currentAlerts = AlertDetection.generateAlert(currentProvModel,bgKnowledgeModel, ruledir, alerts);
+		String outputAlertFile = Utility.saveToFile(alerts,outputdir,alertFile);
+		Utility.storeFileInRepo(triplestore,outputAlertFile, sparqlEp, namegraph+"_alerts", "dba", "dba");
+		alerts.add(currentAlerts);
+		//===================================================================
+	    
 		alljson.clear();
 		alljsObj.clear();
 		jmodels.clear();
+		currentAlerts.close();
+		currentProvModel.close();
 		templ=0;
 	}
 	
@@ -225,6 +223,7 @@ public class JsonReader {
 	System.out.println("save master model to rdf file...");
 	String outputFileName = Utility.getOriginalFileName(namegraph)+".ttl";
 	String outputMasterFile = Utility.saveToFile(masterModel,outputdir,outputFileName);
+	String outputbgKnowledgeFile = Utility.saveToFile(bgKnowledgeModel,inputdir, bgknowledge);
 	
 	//save provModel to rdf..
 	System.out.println("save prov model to rdf file...");
@@ -244,11 +243,16 @@ public class JsonReader {
 	Utility.generateHDTFile(namegraph, outputMasterFile, "TURTLE", outputMasterHDT);
 	String outputProvHDT = inputdir+Utility.getOriginalFileName(namegraph)+"_prov.hdt";
 	Utility.generateHDTFile(namegraph, outputProvFile, "TURTLE", outputProvHDT);
+	//alert as well
+	String outputAlertHDT = inputdir+Utility.getOriginalFileName(namegraph)+"_alert.hdt";
+	Utility.generateHDTFile(namegraph, outputdir+alertFile, "TURTLE", outputAlertHDT);
+	
 	
 	//clean data
 	System.out.println("clean files....");
 	Utility.deleteFile(outputMasterFile);
 	Utility.deleteFile(outputProvFile);
+	Utility.deleteFile(outputdir+alertFile);
 	
 	provModel.close();
 	masterModel.close();

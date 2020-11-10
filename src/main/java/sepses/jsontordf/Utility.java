@@ -1,6 +1,8 @@
 package sepses.jsontordf;
 
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.rdfhdt.hdt.enums.RDFNotation;
@@ -12,6 +14,7 @@ import org.rdfhdt.hdt.options.HDTSpecification;
 import org.rdfhdt.hdtjena.HDTGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.topbraid.shacl.rules.RuleUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import sepses.jsontordf.Storage;
@@ -25,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Utility {
@@ -154,5 +158,34 @@ public class Utility {
 	        os.close();
 	    }
 	}
+	
+    public static Model executeRule(String shaclFile, Model model) throws FileNotFoundException {
+
+        Model constraints = ModelFactory.createDefaultModel();
+        InputStream is = new FileInputStream(shaclFile);
+       // InputStream is = Util.class.getClassLoader().getResourceAsStream(shaclFile);
+        RDFDataMgr.read(constraints, is, Lang.TURTLE);
+        Model result = RuleUtil.executeRules(model, constraints, null, null);
+        // model.add(result);
+        // model.write(System.out,"TURTLE");
+        
+        //return result.getModel();
+        return result;
+    }
+    
+    public static ArrayList<String> listFilesForFolder(final File folder) {
+    	ArrayList<String> rulefiles = new ArrayList<String>();
+    	
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+            	rulefiles.add(fileEntry.getName());
+                // System.out.println(fileEntry.getName());
+            }
+        }
+        
+        return rulefiles;
+    }
 
 }

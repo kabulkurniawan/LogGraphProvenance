@@ -29,7 +29,11 @@ public class Main {
 	       String triplestore= s.get("triple-store").toString();
 	       String backupfile= s.get("backup-file").toString();
 	       String livestore= s.get("live-store").toString();
+	       String ruledir= s.get("rule-dir").toString();
+	       String bgknowledge= s.get("bg-knowledge").toString();
 	       ArrayList<String> fieldfilter= (ArrayList<String>) s.get("field-filter");
+	       ArrayList<String> confidentialdir= (ArrayList<String>) s.get("confidential-dir");
+	       ArrayList<String> recognizedhost= (ArrayList<String>) s.get("recognized-host");
 	       
 	       
 	       
@@ -71,7 +75,7 @@ public class Main {
 //	      //=======end of experiment in IDE   =============
 	    
 	     // System.exit(0);
-	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter, livestore);
+	      JsonReader.readJson(type, file, line, sparqlEp, namegraph, startingLine, outputdir, inputdir, rmldir, rmlfile, triplestore, backupfile, fieldfilter, livestore, ruledir, bgknowledge, confidentialdir, recognizedhost);
 	      
 	      
 	     // FileUtils.cleanDirectory(new File(outputdir));

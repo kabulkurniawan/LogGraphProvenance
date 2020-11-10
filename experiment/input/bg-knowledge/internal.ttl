@@ -1,0 +1,29 @@
+@prefix darpa: <http://sepses.log/darpa#> .
+@prefix cl:    <http://sepses.log/coreLog#> .
+
+<http://sepses.log/darpa/obj#193.40.5.73:80>
+        darpa:hasIntegrity  "low" .
+
+<http://sepses.log/darpa/obj#128.55.12.10:53>
+        darpa:hasIntegrity  "low" .
+
+<http://sepses.res/darpa/obj#/var/log/salt/minion>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.res/darpa/obj#/var/log/debug.log>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.res/darpa/obj#/var/log/maillog>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.res/darpa/obj#/var/log/utx.log>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.res/darpa/obj#/var/log/auth.log>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.res/darpa/obj#/var/log/cron>
+        darpa:hasConfidentiality  "high" .
+
+<http://sepses.log/darpa/obj#10.0.4.1:123>
+        darpa:hasIntegrity  "low" .

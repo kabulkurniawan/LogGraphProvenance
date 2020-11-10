@@ -31,27 +31,39 @@ public class Provenance {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static void generateEventProvenance(Model masterModel, Model provModel, String outputdir, String namegraph, String sparqlEp, String outputFile, String triplestore, String livestore) throws Exception{
+	public static Model generateEventProvenance(Model masterModel, Model provModel, String outputdir, String namegraph, String sparqlEp, String outputFile, String triplestore, String livestore, ArrayList<String> confidentialdir, Model bgknowledgemodel, ArrayList<String> recognizedhost) throws Exception{
 			
 		//saving prov model
 			System.out.println("adding provenance model...");
 	
 			Model currentProvModel = generateProvenanceFromHDT(masterModel, provModel);
 
+			//=========== live store to database ================
 			if(livestore == "true") {
-			//save prov model to rdf.. 	then store prov model to triplestore (uncomment this if you want live storing)
-			System.out.println("save provmodel to rdf file...");
-			String outputProvFile = outputFile+"_prov"+".ttl";
-			String provModelFile = Utility.saveToFile(currentProvModel,outputdir,outputProvFile);
-			Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
-			Utility.deleteFile(provModelFile);
-			//clear prov tail
-			System.out.println("remove provenance tail...");
-			Provenance.removeProvTail(sparqlEp);
+				//save prov model to rdf.. 	then store prov model to triplestore (uncomment this if you want live storing)
+				System.out.println("save provmodel to rdf file...");
+				String outputProvFile = outputFile+"_prov"+".ttl";
+				String provModelFile = Utility.saveToFile(currentProvModel,outputdir,outputProvFile);
+				Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
+				Utility.deleteFile(provModelFile);
+				//clear prov tail
+				System.out.println("remove provenance tail...");
+				Provenance.removeProvTail(sparqlEp);
 			}
+			//========== end live store==============
+			
+			//======background knowledge generation =========================
+			
+			Model confFileFlagModel = KnowledgeGeneration.generateConfidentialFileFlag(currentProvModel, confidentialdir); 
+			bgknowledgemodel.add(confFileFlagModel);
+			Model lowIntegrityNetFlowObjectFlagModel = KnowledgeGeneration.generatelowIntegrityNetFlowFlag(currentProvModel, recognizedhost); 
+			bgknowledgemodel.add(lowIntegrityNetFlowObjectFlagModel);
+			
 			
 			provModel.add(currentProvModel);
 			//clear current event graph (remove event graphs that have already been generated as provenance ) 
+			
+			
 			clearCurrentEventGraph(masterModel);
 			
 			//save mastermodel to rdf..
@@ -59,8 +71,9 @@ public class Provenance {
 			//Utility.saveToFile(masterModel,outputdir,outputFile);
 			
 			System.out.println("done!");
+			return currentProvModel;
 
-		
+			
 	}
 	
 	private static Model generateProvenanceFromHDT(Model masterModel, Model provModel) throws IOException {

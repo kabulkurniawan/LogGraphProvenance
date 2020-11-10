@@ -1,0 +1,47 @@
+# baseURI: http://sepses.log/darpa
+# imports: http://datashapes.org/dash
+# prefix: darpa
+
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix darpa: <http://sepses.log/darpa#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://sepses.log/darpa>
+  rdf:type owl:Ontology ;
+  rdfs:label "Test of Write Event" ;
+  owl:imports <http://datashapes.org/dash> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+  sh:declare [
+      rdf:type sh:PrefixDeclaration ;
+      sh:namespace "http://sepses.log/darpa#"^^xsd:anyURI ;
+      sh:prefix "darpa" ;
+    ] ;
+.
+darpa:ReceiveConnectionAlertShape
+  rdf:type sh:NodeShape ;
+  sh:rule [
+      rdf:type sh:SPARQLRule ;
+      sh:construct """
+		PREFIX darpa: <http://sepses.log/darpa#>
+                CONSTRUCT {
+			?a a darpa:ReceiveConnectionAlert .
+  			?a darpa:hasProcess ?s.
+                        ?a darpa:hasHost ?o.
+			?o darpa:receivedBy ?s .
+
+		} WHERE {
+			?o darpa:receivedBy ?s .
+			?o darpa:hasIntegrity  "low" .
+			BIND (strafter(str(?s),"#") AS ?subj) 
+                        BIND (strafter(str(?o),"#") AS ?obj)
+                        BIND (URI(CONCAT(CONCAT(CONCAT("http://sepses.rec/alert#",?subj),"Receive"),?obj )) AS ?a)  			                                
+		}
+			""" ;
+      sh:prefixes <http://sepses.log/darpa> ;
+    ] ;
+  sh:targetClass darpa:Subject ;
+.

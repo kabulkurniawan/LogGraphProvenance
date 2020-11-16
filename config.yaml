@@ -4,15 +4,20 @@ output-dir: experiment/output/
 
 rml-dir: experiment/rml/
 
-rule-dir: experiment/rule/
-
-rml-file: darpa-engagement3lite.rml
+rml-file: darpa-engagement3lite2.rml
 
 bg-knowledge: bg-knowledge/internal.ttl
 
+provenance-rule: experiment/rule/provenance.rule
+
+propagation-rule: experiment/rule/propagation.rule
+
+alert-rule: experiment/rule/alert.rule
+
+
 triple-store: graphdb
 
-live-store: yes
+live-store: no
 
 backup-file: no
 
@@ -25,10 +30,14 @@ recognized-host:
  - localhost
  - 127.0.0.1
  - 128.55.12.167
- #- 128.55.12.10
+ - 10.0.4.1
+ - 128.55.12.10
+ - 193.40.5.73
 
 field-filter:
  - EVENT_EXIT
+ - EVENT_MPROTECT
+ - EVENT_LOGIN
  #- EVENT_EXECUTE
  - EVENT_ACCEPT
  - EVENT_SENDMSG

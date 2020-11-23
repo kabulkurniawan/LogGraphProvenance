@@ -14,25 +14,22 @@ import org.apache.jena.update.UpdateRequest;
 
 public class Provenance {
 	
-	public static Model generateEventProvenance(Model masterModel, Model provModel, String outputdir, String namegraph, String sparqlEp, String outputFile, String triplestore, String livestore, String provrule) throws Exception{
+	public static Model generateEventProvenance(Model masterModel, Model provModel, String provrule, String outputdir, String namegraph, String sparqlEp, String outputFile, String triplestore, String livestore) throws Exception{
 
 			System.out.println("adding provenance model...");
 			Model currentProvModel = generateProvenance(masterModel, provModel, provrule);
 
-			//=========== live store to database ================
+			//livestore
 			if(livestore == "true") {
 				//save prov model to rdf.. 	then store prov model to triplestore (uncomment this if you want live storing)
-				System.out.println("save provmodel to rdf file...");
-				String outputProvFile = outputFile+"_prov"+".ttl";
+				String outputProvFile = outputFile+"_provenance"+".ttl";
 				String provModelFile = Utility.saveToFile(currentProvModel,outputdir,outputProvFile);
-				Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_prov", "dba", "dba");
+				Utility.storeFileInRepo(triplestore,provModelFile, sparqlEp, namegraph+"_provenance", "dba", "dba");
 				Utility.deleteFile(provModelFile);
 				//clear prov tail
-				System.out.println("remove provenance tail...");
 				Provenance.removeProvTail(sparqlEp);
 			}
-			//========== end live store==============
-			
+
 			//clear current event graph (remove event graphs that have already been generated as provenance ) 
 			clearCurrentEventGraph(masterModel);
 			
@@ -42,9 +39,7 @@ public class Provenance {
 	}
 	
 	private static Model generateProvenance(Model masterModel, Model provModel, String provrule) throws IOException, URISyntaxException {
-		
-		Model deduction = ModelFactory.createDefaultModel();
-		 
+				 
 		 String provQuery = "prefix cl: <http://sepses.log/coreLog#>\r\n" + 
 	        		"prefix darpa: <http://sepses.log/darpa#>\r\n" + 
 	        		"\r\n" + 
@@ -76,6 +71,17 @@ public class Provenance {
 	        QueryExecution provExec = QueryExecutionFactory.create(provQuery, masterModel);
 	        Model currentProvModel = provExec.execConstruct();
 
+	        // update fork to forks
+	    	String queryForkToForks = "prefix darpa: <http://sepses.log/darpa#>\r\n" 
+	    			+ "DELETE { ?s darpa:fork ?o.}  \r\n" + 
+	    			  "INSERT { ?s darpa:forks ?o.}  \r\n" + 
+	        		"WHERE { \r\n" + 
+	        		  " ?s darpa:fork ?o.\r\n" + 
+	        		  " }";
+		    UpdateRequest f2fRequest = UpdateFactory.create(queryForkToForks);
+		    UpdateAction.execute(f2fRequest,currentProvModel) ;
+	        
+	        
 	        Model tempModel = currentProvModel.union(provModel);
 	        
 	        String forkQuery = "prefix darpa: <http://sepses.log/darpa#>\r\n" + 
@@ -90,6 +96,7 @@ public class Provenance {
 	        tempModel.close();
 	        currentProvModel.add(forkModel);
 	    	        
+	        	  	        
 	        //remodeled the graph as used to be
 	        //1. create a simple execution structure
 	        System.out.println("fixing file execution relation..");
@@ -130,11 +137,96 @@ public class Provenance {
 	        
 	        UpdateRequest oldExecRequest = UpdateFactory.create(oldExecQuery);
 	        UpdateAction.execute(oldExecRequest,currentProvModel) ;
-	      
-	        System.out.println("run reasoning (provenance rule)..");
-	        deduction = JenaReasoner.parseRule(currentProvModel,provrule);
+	  
+	     /*
+	        //delete temporary Subject Relation, we cannot delete object relation because it could
+  		    //be used to connect upcoming subject relation
+  		    
+  		    String delSubjQuery = "prefix darpa: <http://sepses.log/darpa#>\r\n" + 
+  		    		"DELETE { ?s darpa:hasSubject ?o. } \r\n" + 
+  		    		"where { \r\n" + 
+  		    		"    ?s darpa:hasSubject ?o.\r\n" + 
+  		    		"    \r\n" + 
+  		    		" }";
+  		    
+  		    UpdateRequest delSubjUpdate = UpdateFactory.create(delSubjQuery);
+  	        UpdateAction.execute(delSubjUpdate,currentProvModel) ;
+
 	        
-	   	currentProvModel.add(deduction);
+	        //1b. removed the old execution structure
+
+	        String delOldExecQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        		"DELETE {?bashB darpa:execute ?objy  }\r\n" + 
+	        		"\r\n" + 
+	        		"where { \r\n" + 
+	        		"    ?bashB darpa:execute ?objy.\r\n" + 
+	        		"   \r\n" + 
+	        		"}";
+	        
+		    UpdateRequest delOldExecUpdate = UpdateFactory.create(delOldExecQuery);
+		    UpdateAction.execute(delOldExecUpdate,currentProvModel) ;
+	
+		  
+
+		    //2.a read (from ?s read ?o, to ?o readyBy ?s)
+	        System.out.println("fixing read-write and send-receive relation..");
+	        String readQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        		"DELETE { ?s darpa:read ?o  }\r\n" + 
+	        		"INSERT { ?o darpa:isReadBy ?s }\r\n" + 
+	        		"\r\n" + 
+	        		"where { \r\n" + 
+	        		"   ?s darpa:read ?o\r\n" + 
+	        		"}\r\n" + 
+	        		"";
+	        UpdateRequest readExec = UpdateFactory.create(readQuery);
+	        UpdateAction.execute(readExec,currentProvModel) ;
+		    
+	        
+	        //2.b write (from ?s write ?o, to ?s writeTo ?o)
+	        String writeQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        		"DELETE { ?s darpa:write ?o }\r\n" + 
+	        		"INSERT { ?s darpa:writes ?o}\r\n" + 
+	        		"\r\n" + 
+	        		"where { \r\n" + 
+	        		"   ?s darpa:write ?o\r\n" + 
+	        		"}\r\n" + 
+	        		"";
+	        
+		    UpdateRequest writeExec = UpdateFactory.create(writeQuery);
+		    UpdateAction.execute(writeExec,currentProvModel) ;
+		    
+	        
+	        //3a. send (from ?s sendto ?o, to ?s sendTo ?o)
+	        String sendQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        		"DELETE {  ?s darpa:sendto ?o }\r\n" + 
+	        		"INSERT {  ?s darpa:sends ?o }\r\n" + 
+	        		"\r\n" + 
+	        		"where { \r\n" + 
+	        		"   ?s darpa:sendto ?o\r\n" + 
+	        		"}\r\n" +  
+	        		"";
+	        
+		    UpdateRequest sendExec = UpdateFactory.create(sendQuery);
+		    UpdateAction.execute(sendExec,currentProvModel) ;
+		    
+	        
+	        //3b. receive (from ?s recvfrom ?o, to ?o receivedBy ?s)
+	        String receiveQuery = "PREFIX darpa: <http://sepses.log/darpa#>\r\n" + 
+	        		"DELETE { ?s darpa:recvfrom ?o } \r\n" + 
+	        		"INSERT { ?o darpa:isReceivedBy ?s }\r\n" + 
+	        		"\r\n" + 
+	        		"where { \r\n" + 
+	        		"   ?s darpa:recvfrom ?o\r\n" + 
+	        		"}\r\n" + 
+	        		"";
+	        
+		    UpdateRequest receiveExec = UpdateFactory.create(receiveQuery);
+		    UpdateAction.execute(receiveExec,currentProvModel) ;
+		    */
+		  System.out.println("run reasoning (provenance rule)..");
+			Model deduction = JenaReasoner.parseRule(currentProvModel,provrule);
+		 	currentProvModel.add(deduction);
+			deduction.close();
 	  return currentProvModel;
 
 	}

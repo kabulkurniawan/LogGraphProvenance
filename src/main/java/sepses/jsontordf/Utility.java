@@ -102,16 +102,18 @@ public class Utility {
 	}
 	public static void generateHDTFile(String baseURI, String filename, String inputType, String outputFile) throws IOException, ParserException {
 		//generate file name based on the original input file name
-    	
-		HDT hdt = HDTManager.generateHDT(filename, baseURI, RDFNotation.parse(inputType), new HDTSpecification(), null);
+	
+			HDT hdt = HDTManager.generateHDT(filename, baseURI, RDFNotation.parse(inputType), new HDTSpecification(), null);
+			
+			// Add additional domain-specific properties to the header:
+			Header header = hdt.getHeader();
+			header.insert("myResource1", "property" , "value");
+			
+			// Save generated HDT to a file
+			hdt.saveToHDT(outputFile, null);
 		
-		// Add additional domain-specific properties to the header:
-		Header header = hdt.getHeader();
-		header.insert("myResource1", "property" , "value");
 		
-		// Save generated HDT to a file
-		hdt.saveToHDT(outputFile, null);
-	}
+		}
 	
 	public static Model loadHDTToJenaModel(String HDTFile) throws IOException{
 		// Load HDT file using the hdt-java library

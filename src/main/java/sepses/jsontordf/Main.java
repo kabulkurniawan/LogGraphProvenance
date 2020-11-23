@@ -48,20 +48,20 @@ public class Main {
 	    //=====end commandline argument===========
 	      
 	  	//====== only for experiment in IDE, please uncomment this lines when you compile ========= 
-	      type = "darpa";
-	      file = inputdir+"darpa/cadets100000.json";
-	  	  line = "10000";
-	      if(triplestore.equals("virtuoso")) {  	  
-	  	     sparqlEp ="http://localhost:8890/sparql";
-	      }else if(triplestore.equals("graphdb")){
-	  	     sparqlEp = "http://localhost:7200/repositories/cadets100000";
-	      }else {
-	  	    //default: graphdb	 
-	  	     sparqlEp = "http://localhost:7200/repositories/cadets100000";
-	  	   }
-	      namegraph = "http://w3id.org/sepses/graph/cadets100000";
-	  	  startingLine = "0";
-	      //=======end of experiment in IDE=============
+//	      type = "darpa";
+//	      file = inputdir+"darpa/cadets50000-2.json";
+//	  	  line = "50000";
+//	      if(triplestore.equals("virtuoso")) {  	  
+//	  	     sparqlEp ="http://localhost:8890/sparql";
+//	      }else if(triplestore.equals("graphdb")){
+//	  	     sparqlEp = "http://localhost:7200/repositories/cadets100000";
+//	      }else {
+//	  	    //default: graphdb	 
+//	  	     sparqlEp = "http://localhost:7200/repositories/cadets100000";
+//	  	   }
+//	      namegraph = "http://w3id.org/sepses/graph/cadets100000";
+//	  	  startingLine = "0";
+//	      //=======end of experiment in IDE=============
 	    
 	  /* general algorithm 	  
 	  	  1. Log Parsing (convert raw log data into structured, interpretable format e.g. (JSON)

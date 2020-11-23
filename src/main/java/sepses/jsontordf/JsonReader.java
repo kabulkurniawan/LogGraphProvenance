@@ -15,6 +15,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.rdfhdt.hdt.exceptions.ParserException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,9 +45,12 @@ public class JsonReader {
 		Integer startingLine = 1; // 1 means start from the beginning
 		if(sl!=null) {startingLine=Integer.parseInt(sl);}
 		
+		
+		//JSONParser jsparser = new JSONParser(); 
 		JSONObject alljsObj = new JSONObject();
 		JSONArray alljson = new JSONArray();
-			
+		//JSONObject json = new JSONObject();
+		
 		// create in one json object
 		Integer countLine=0;
 		Integer templ = 0;
@@ -123,7 +127,7 @@ public class JsonReader {
 					Utility.deleteFile(outputFileName);
 					
 					//run attack graph generation!
-					AttackGraphGeneration.generateAttackGraph(masterModel, provModel, knowledgeModel, outputdir, namegraph, sparqlEp, outputFileName, triplestore, livestore, provrule, propagationrule, bgknowledge, confidentialdir, recognizedhost);
+					AttackGraphGeneration.generateAttackGraph(masterModel, provModel, knowledgeModel, alertModel,  provrule,  bgknowledge,propagationrule, alertrule, confidentialdir, recognizedhost,outputdir, namegraph, sparqlEp, outputFileName, triplestore, livestore);
 					
 					alljson.clear();
 					alljsObj.clear();
@@ -155,7 +159,7 @@ public class JsonReader {
 		Utility.deleteFile(outputFileName);
 		
 		//run attack graph generation!
-		AttackGraphGeneration.generateAttackGraph(masterModel, provModel, knowledgeModel, outputdir, namegraph, sparqlEp, outputFileName, triplestore, livestore, provrule, propagationrule, bgknowledge, confidentialdir, recognizedhost);
+		AttackGraphGeneration.generateAttackGraph(masterModel, provModel, knowledgeModel, alertModel,  provrule,  bgknowledge,propagationrule, alertrule, confidentialdir, recognizedhost,outputdir, namegraph, sparqlEp, outputFileName, triplestore, livestore);
 		
 		alljson.clear();
 		alljsObj.clear();
@@ -163,7 +167,7 @@ public class JsonReader {
 	}
 	
 	//post processing attack graph e.g. store to rdf file, .hdt
-	AttackGraphGeneration.postProcessingAttackGraph(masterModel, provModel, knowledgeModel, namegraph, inputdir, outputdir, bgknowledge, livestore, triplestore, sparqlEp);	
+	AttackGraphGeneration.postProcessingAttackGraph(masterModel, provModel, knowledgeModel, alertModel,namegraph, inputdir, outputdir, bgknowledge, livestore, triplestore, sparqlEp);	
 	
 	System.out.println("Finished!");	
 	
@@ -184,7 +188,7 @@ public class JsonReader {
 	private static Boolean filterLine(JsonNode jsonevent, ArrayList<String> fieldfilter) {
 		Boolean result = false;
 		
-			String jsontype = jsonevent.get("type").asText();
+		String jsontype = jsonevent.get("type").asText();
 			for (int i = 0; i < fieldfilter.size(); i++) {
 				if(jsontype.equals(fieldfilter.get(i))) {
 					result = true;

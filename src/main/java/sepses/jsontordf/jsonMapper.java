@@ -24,12 +24,18 @@ public class jsonMapper {
 		 node.put("eventSubjectUUID", eventSubjectUUID);
 		 node.put("eventObjectUUID", eventObjectUUID);
 		 if(eventObjectPathString!="") {
-		   node.put("eventObjectPathString", eventObjectPathString);
+		   node.put("eventObjectPathString", cleanStrangeChar(eventObjectPathString));
 		 }
-		 node.put("eventPropertiesMapExec", eventPropertiesMapExec);
+		 node.put("eventPropertiesMapExec", cleanStrangeChar(eventPropertiesMapExec));
 		 
 	return node;
 
+	}
+	
+	protected static String cleanStrangeChar(String string) {
+		string = string.replace("{", "");
+		string = string.replace("}", "");
+		return string;
 	}
 
 	public static ObjectNode constructSimpleFileJson(ObjectNode jsonNode) {

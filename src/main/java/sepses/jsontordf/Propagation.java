@@ -23,8 +23,6 @@ public class Propagation {
 			Utility.deleteFile(knowledgeModelFile);
 		}
 		
-		
-	
 	}
 	
 	public static void flagGenerationByPropagationRules(Model provModel, Model bgknowledgemodel, String propagationrule ) throws URISyntaxException, IOException{
